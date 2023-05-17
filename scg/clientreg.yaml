@@ -1,0 +1,24 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: sso.apps.tanzu.vmware.com/v1alpha1
+kind: ClientRegistration
+metadata:
+   name: acme-fitness-client-registration
+spec:
+   authServerSelector:
+      matchLabels:
+         name: acme-fitness-authserver
+         env: production
+   redirectURIs:
+      - #@ "https://acme-fitness.apps.{}/login/oauth2/code/sso".format(data.values.ingress.domain)
+   requireUserConsent: false
+   clientAuthenticationMethod: basic
+   authorizationGrantTypes:
+      - "client_credentials"
+      - "authorization_code"
+   scopes:
+      - name: "openid"
+      - name: "email"
+      - name: "profile"
+      - name: "roles"
+      - name: "messages.read"

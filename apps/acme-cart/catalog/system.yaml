@@ -1,0 +1,8 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: fitness-store
+  description: Todos Application
+spec:
+  owner: default-team
+  domain: cloud-apps

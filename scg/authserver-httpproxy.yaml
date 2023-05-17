@@ -1,0 +1,32 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acme-fitness-authserver-service
+  annotations:
+    kapp.k14s.io/disable-default-label-scoping-rules: ""
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/part-of: acme-fitness-authserver
+    app.kubernetes.io/component: authorization-server
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  annotations:
+    projectcontour.io/ingress.class: contour
+  name: acme-fitness-appsso-httpproxy
+spec:
+  virtualhost:
+    fqdn: #@ "authserver-acme-fitness.apps.{}".format(data.values.ingress.domain)
+    tls:
+      secretName: #@ "tanzu-system-ingress/cnr-{}".format(data.values.ingress.contour_tls_secret)
+  routes:
+    - services:
+        - name: acme-fitness-authserver-service
+          port: 8080

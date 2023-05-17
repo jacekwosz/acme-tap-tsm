@@ -1,0 +1,18 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-payment
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  source:
+    subPath: apps/acme-catalog
+    git:
+      url: https://github.com/odedia/acme-fitness-store
+      ref:
+        branch: main

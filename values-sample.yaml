@@ -1,0 +1,5 @@
+#@data/values
+---
+ingress:
+  contour_tls_secret: some-secret-in-tanzu-system-ingress-namespace
+  fqdn: my-fqdn

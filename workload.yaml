@@ -1,0 +1,240 @@
+#@ load("@ytt:data", "data")
+
+---
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-cart
+  namespace: #@ data.values.workloadNamespace
+  labels:
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  env:
+  - name: CART_PORT
+    value: "8080"
+  - name: AUTH_URL
+    value:  #@ data.values.appSSOIssuerURI
+  - name: AUTH_MODE
+    value: "1"
+  - name: REDIS_HOST
+    value: cart-redis
+  - name: REDIS_PORT
+    value: "6379"
+  - name: REDIS_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: cart-redis-pass
+        key: password
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  - name: ports
+    value:
+    - port: 80
+      containerPort: 8080
+      name: http
+  source:
+    subPath: apps/acme-cart
+    git:
+      url: https://github.com/jacekwosz/acme-tap-tsm
+
+      ref:
+        branch: main
+---
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-order
+  namespace: #@ data.values.workloadNamespace
+  labels:
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/part-of: acme-fitness-store
+    networking.knative.dev/visibility: cluster-local
+spec:
+  env:
+  - name: AcmeServiceSettings__AuthUrl
+    value: #@ data.values.appSSOIssuerURI
+  - name: PAYMENT_SERVICE_SERVICE_HOST
+    value: acme-payment
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  - name: ports
+    value:
+    - port: 80
+      containerPort: 8080
+      name: http
+  source:
+    subPath: apps/acme-order
+    git:
+      url: https://github.com/jacekwosz/acme-tap-tsm
+      ref:
+        branch: main
+---
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-shopping
+  namespace: #@ data.values.workloadNamespace
+  labels:
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  env:
+  - name: SHOPPING_TEXT
+    value: 'THIS FRONTEND IS RUNNING ON TAP@TKG'
+  - name: USERS_HOST
+    value: 'users.' +  #@ data.values.gns
+  - name: CATALOG_HOST
+    value: 'catalog' + #@ data.values.gns
+  - name: ORDER_HOST
+    value: 'order.' + #@ data.values.gns
+  - name: CART_HOST
+    value: 'cart.' #@ data.values.gns
+  build:
+    env:
+    - name: BP_NODE_RUN_SCRIPTS
+      value: "build"
+    - name: BP_WEB_SERVER
+      value: "httpd"
+    - name: BP_WEB_SERVER_ROOT
+      value: "public"
+    - name: BP_WEB_SERVER_ENABLE_PUSH_STATE
+      value: "true"
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  - name: ports
+    value:
+    - port: 80
+      containerPort: 8080
+      name: http
+  source:
+    subPath: apps/acme-shopping
+    git:
+      url: https://github.com/jacekwosz/acme-tap-tsm
+      ref:
+        branch: main
+---
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-identity
+  namespace: #@ data.values.workloadNamespace
+  labels:
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  env:
+  - name: JWK_URI
+    value:  #@ data.values.appSSOIssuerURI + '/oauth2/jwks'
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  - name: ports
+    value:
+    - port: 80
+      containerPort: 8080
+      name: http
+  source:
+    subPath: apps/acme-identity
+    git:
+      url: https://github.com/jacekwosz/acme-tap-tsm
+      ref:
+        branch: main
+---
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-catalog-b
+  namespace: #@ data.values.workloadNamespace
+  labels:
+    apps.tanzu.vmware.com/workload-type: server
+    apps.tanzu.vmware.com/has-tests: "false"
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  env:
+    - name: spring.mvc.static-path-pattern
+      value: /static/images/**
+    - name: spring.web.resources.cache.cachecontrol.max-age
+      value: "3600"
+    - name: spring.web.resources.cache.cachecontrol.cache-public
+      value: "true"
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  - name: ports
+    value:
+    - port: 80
+      containerPort: 8080
+      name: http
+  source:
+    subPath: apps/acme-catalog-b
+    git:
+      url: https://github.com/jacekwosz/acme-tap-tsm
+      ref:
+        branch: main
+---
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-catalog-a
+  namespace: #@ data.values.workloadNamespace
+  labels:
+    apps.tanzu.vmware.com/workload-type: server
+    apps.tanzu.vmware.com/has-tests: "false"
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  env:
+    - name: spring.mvc.static-path-pattern
+      value: /static/images/**
+    - name: spring.web.resources.cache.cachecontrol.max-age
+      value: "3600"
+    - name: spring.web.resources.cache.cachecontrol.cache-public
+      value: "true"
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  - name: ports
+    value:
+    - port: 80
+      containerPort: 8080
+      name: http
+  source:
+    subPath: apps/acme-catalog-a
+    git:
+      url: https://github.com/jacekwosz/acme-tap-tsm
+      ref:
+        branch: main        
+---
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-payment
+  namespace: #@ data.values.workloadNamespace
+  labels:
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  - name: ports
+    value:
+    - port: 80
+      containerPort: 8080
+      name: http
+  source:
+    subPath: apps/acme-catalog
+    git:
+      url: https://github.com/jacekwosz/acme-tap-tsm
+      ref:
+        branch: main

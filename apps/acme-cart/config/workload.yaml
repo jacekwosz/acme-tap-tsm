@@ -1,0 +1,36 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-cart
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  env:
+  - name: CART_PORT
+    value: "8080"
+  - name: AUTH_URL
+    value: #@ "https://authserver-acme-fitness.{}".format(data.values.ingress.domain)
+  - name: AUTH_MODE
+    value: "1"
+  - name: REDIS_HOST
+    value: redis-master
+  - name: REDIS_PORT
+    value: "6379"
+  - name: REDIS_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: redis
+        key: redis-password
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  source:
+    subPath: apps/acme-cart
+    git:
+      url: https://github.com/odedia/acme-fitness-store
+      ref:
+        branch: main

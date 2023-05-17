@@ -1,0 +1,23 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-identity
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  env:
+  - name: JWK_URI
+    value:  #@ "https://authserver-acme-fitness.{}/oauth2/jwks".format(data.values.ingress.domain)
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  source:
+    subPath: apps/acme-identity
+    git:
+      url: https://github.com/odedia/acme-fitness-store
+      ref:
+        branch: main

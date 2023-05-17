@@ -1,0 +1,26 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-catalog
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    apps.tanzu.vmware.com/has-tests: "false"
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  env:
+    - name: spring.mvc.static-path-pattern
+      value: /static/images/**
+    - name: spring.web.resources.cache.cachecontrol.max-age
+      value: "3600"
+    - name: spring.web.resources.cache.cachecontrol.cache-public
+      value: "true"
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  source:
+    subPath: apps/acme-catalog
+    git:
+      url: https://github.com/odedia/acme-fitness-store
+      ref:
+        branch: main

@@ -1,0 +1,22 @@
+logging.level:
+  org.springframework.data: warn
+
+spring:
+  application:
+    name: 'acme-identity'
+  config:
+    activate:
+      on-profile: default
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${JWK_URI}
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'

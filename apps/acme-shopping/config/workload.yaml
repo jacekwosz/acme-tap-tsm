@@ -1,0 +1,28 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: acme-shopping
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: acme-fitness-store
+spec:
+  build:
+    env:
+    - name: BP_NODE_RUN_SCRIPTS
+      value: "build"
+    - name: BP_WEB_SERVER
+      value: "httpd"
+    - name: BP_WEB_SERVER_ROOT
+      value: "public"
+    - name: BP_WEB_SERVER_ENABLE_PUSH_STATE
+      value: "true"
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  source:
+    subPath: apps/acme-shopping
+    git:
+      url: https://github.com/odedia/acme-fitness-store
+      ref:
+        branch: main
