@@ -4,7 +4,7 @@ metadata:
   name: acme-fitness-gateway
   description: My SCG application gateway in TSM
   annotations:
-    'backstage.io/kubernetes-label-selector': 'app.kubernetes.io/part-of=acme-fitness-store'
+    'backstage.io/kubernetes-label-selector': 'app.kubernetes.io/part-of=acme-fitness-gateway'
 spec:
   type: service
   lifecycle: production
