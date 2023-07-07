@@ -84,16 +84,8 @@ metadata:
     app.kubernetes.io/part-of: acme-fitness-store
 spec:
   env:
-  - name: SHOPPING_TEXT
-    value: 'THIS FRONTEND IS RUNNING ON TAP@TKG'
-  - name: USERS_HOST
-    value: 'users.' +  #@ data.values.gns
-  - name: CATALOG_HOST
-    value: 'catalog' + #@ data.values.gns
-  - name: ORDER_HOST
-    value: 'order.' + #@ data.values.gns
-  - name: CART_HOST
-    value: 'cart.' #@ data.values.gns
+  - name: PORT
+    value: "8080"
   build:
     env:
     - name: BP_NODE_RUN_SCRIPTS
