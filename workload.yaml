@@ -9,6 +9,7 @@ metadata:
   labels:
     apps.tanzu.vmware.com/workload-type: server
     app.kubernetes.io/part-of: acme-fitness-store
+    apps.tanzu.vmware.com/has-tests: "true"
 spec:
   env:
   - name: CART_PORT
@@ -52,6 +53,7 @@ metadata:
     apps.tanzu.vmware.com/workload-type: server
     app.kubernetes.io/part-of: acme-fitness-store
     networking.knative.dev/visibility: cluster-local
+    apps.tanzu.vmware.com/has-tests: "true"
 spec:
   env:
   - name: AcmeServiceSettings__AuthUrl
@@ -82,6 +84,7 @@ metadata:
   labels:
     apps.tanzu.vmware.com/workload-type: server
     app.kubernetes.io/part-of: acme-fitness-store
+    apps.tanzu.vmware.com/has-tests: "true"
 spec:
   env:
   - name: PORT
@@ -120,6 +123,7 @@ metadata:
   labels:
     apps.tanzu.vmware.com/workload-type: server
     app.kubernetes.io/part-of: acme-fitness-store
+    apps.tanzu.vmware.com/has-tests: "true"
 spec:
   env:
   - name: JWK_URI
@@ -149,6 +153,7 @@ metadata:
     apps.tanzu.vmware.com/workload-type: server
     apps.tanzu.vmware.com/has-tests: "false"
     app.kubernetes.io/part-of: acme-fitness-store
+    apps.tanzu.vmware.com/has-tests: "true"
 spec:
   env:
     - name: spring.mvc.static-path-pattern
@@ -176,12 +181,13 @@ spec:
 apiVersion: carto.run/v1alpha1
 kind: Workload
 metadata:
-  name: acme-catalog-a
+  name: acme-catalog
   namespace: #@ data.values.workloadNamespace
   labels:
     apps.tanzu.vmware.com/workload-type: server
     apps.tanzu.vmware.com/has-tests: "false"
     app.kubernetes.io/part-of: acme-fitness-store
+    apps.tanzu.vmware.com/has-tests: "true"
 spec:
   env:
     - name: spring.mvc.static-path-pattern
@@ -214,6 +220,7 @@ metadata:
   labels:
     apps.tanzu.vmware.com/workload-type: server
     app.kubernetes.io/part-of: acme-fitness-store
+    apps.tanzu.vmware.com/has-tests: "true"
 spec:
   params:
   - name: annotations
