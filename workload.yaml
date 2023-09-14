@@ -219,6 +219,7 @@ metadata:
     apps.tanzu.vmware.com/workload-type: server
     app.kubernetes.io/part-of: acme-fitness-store
     apps.tanzu.vmware.com/has-tests: "true"
+
 spec:
   params:
   - name: annotations
