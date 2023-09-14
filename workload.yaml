@@ -232,7 +232,7 @@ spec:
       containerPort: 8080
       name: http
   source:
-    subPath: apps/acme-catalog
+    subPath: apps/acme-payment
     git:
       url: https://github.com/jacekwosz/acme-tap-tsm
       ref:
